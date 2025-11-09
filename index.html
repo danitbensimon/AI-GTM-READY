@@ -94,7 +94,7 @@
             <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 gradient-text">
                 The AI-Hype Check
             </h1>
-            <p class="text-lg text-gray-400">Rate your AI-GTM across 8 key pipeline capabilities.</p>
+            <p class="text-lg text-gray-400">Rate your AI-GTM across 7 key pipeline capabilities.</p>
             <!-- Danit Ben Simon credit -->
             <p class="text-xs text-gray-400 font-medium mb-6">
                 Vibe Coded by: <a href="https://www.linkedin.com/in/danitbensimon/" target="_blank" class="text-indigo-300 hover:text-indigo-400 hover:underline">Danit Ben Simon</a>
@@ -105,7 +105,7 @@
         <div id="quiz-area">
             <!-- Progress Bar -->
             <div class="mb-8">
-                <p class="text-sm font-medium text-gray-300 mb-2">Question <span id="current-question-count">0</span> / 8</p>
+                <p class="text-sm font-medium text-gray-300 mb-2">Question <span id="current-question-count">0</span> / 7</p>
                 <div class="w-full bg-gray-700 rounded-full h-2.5">
                     <div id="progress-bar" class="bg-gradient-to-r from-cyan-400 to-fuchsia-500 h-2.5 rounded-full progress-bar-fill" style="width: 0%"></div>
                 </div>
@@ -176,7 +176,7 @@
                         <li>Scale [Area 2].</li>
                         <li>Integrate [Area 3].</li>
                     </ul>
-                    <p class="text-sm pt-2 text-cyan-500 font-medium">This is where the Gemini API would generate a fully personalized action plan based on your 8 scores!</p>
+                    <p class="text-sm pt-2 text-cyan-500 font-medium">This is where the Gemini API would generate a fully personalized action plan based on your 7 scores!</p>
                 </div>
             </div>
 
@@ -189,23 +189,19 @@
     </div>
 
     <script>
-        // Updated questions array to 8 items, aligning with advanced GTM maturity logic.
+        // Updated questions array to 7 items.
         const questions = [
             { text: "1. Buying Signal Collection: Do you use AI to monitor buying signals (e.g., funding, tech stack changes) for accounts?", inverted: false },
             { text: "2. Visitor De-Anonymization: Do you use AI to identify website visitors and trigger immediate, personalized outreach sequences?", inverted: false },
             { text: "3. Champion Job-Change Tracking: Do you track past and current champions using AI to automatically flag them when they change jobs for re-engagement?", inverted: false },
             { text: "4. Competitive Account Monitoring: Do you use AI to monitor competitor accounts for churn signals and trigger targeted campaigns?", inverted: false },
-            { text: "5. Dynamic Engagement Personalization: Are your multi-channel sequences dynamically generated and AI-written based on the *latest* prospect signals?", inverted: false }, 
+            { text: "5. Dynamic Outreach: Does AI dynamically write and personalize your multi-channel outreach content based on prospect signals?", inverted: false }, // Simplified Question 5
             { text: "6. GTM Ownership Shift: Has ABM execution ownership shifted from Sales Reps to Marketing/Ops due to AI's ability to execute at scale?", inverted: false }, 
             { text: "7. AI for Lead Categorization/Scoring: Do you use AI to score and categorize inbound leads/visitors based on pipeline likelihood (e.g., fit + intent)?", inverted: false }, 
-            { 
-                text: "8. Generative AI Dependency: Is your *only* use of AI limited to manual content creation and basic chat interaction outside of integrated GTM tools?",
-                inverted: true 
-            },
         ];
 
-        const MAX_QUESTIONS = questions.length; // 8
-        const MAX_SCORE = MAX_QUESTIONS * 10; // 80 (Normalized to 100 in results)
+        const MAX_QUESTIONS = questions.length; // Now 7
+        const MAX_SCORE = MAX_QUESTIONS * 10; // Now 70 (Normalized to 100 in results)
 
         let currentQuestionIndex = 0;
         let totalScore = 0;
@@ -286,8 +282,8 @@
             const q = questions[currentQuestionIndex];
             let score;
             
-            // If NOT inverted: YES is 10 (good), NO is 0 (bad)
-            // If INVERTED (Q8): YES is 0 (bad), NO is 10 (good)
+            // Note: Since Q8 (the only inverted question) was removed, this logic could be simpler, 
+            // but keeping the inverted check here for future flexibility.
             const isGoodAnswer = q.inverted ? !isYes : isYes;
             score = isGoodAnswer ? 10 : 0;
 
@@ -411,9 +407,9 @@
                 level = "Foundational AI User: Primarily Manual/Content";
                 recommendationText = `<div class="font-semibold text-white">1. Key Focus Area: Foundational Strategy (Level 1/5)</div>
                     <ul class="list-disc list-inside text-gray-400 space-y-1 ml-4">
-                        <li>Eliminate Dependencies: Immediately work to reduce reliance on content-only and chat AI (Q8).</li>
                         <li>Pilot De-Anonymization: Launch a pilot project to identify website visitors for rep follow-up (Q2).</li>
                         <li>Shift GTM Ownership: Start shifting repetitive GTM research and personalization tasks away from Sales to Marketing/Ops (Q6).</li>
+                        <li>Implement AI for Scoring: Begin using basic AI categorization/scoring (Q7) to qualify inbound visitors.</li>
                     </ul>`;
             }
 
@@ -426,7 +422,7 @@
             resultsArea.classList.remove('hidden');
             setTimeout(() => resultsArea.classList.remove('opacity-0'), 10);
 
-            // Total score is 0-80, normalize to 0-100
+            // Total score is 0-70, normalize to 0-100
             calculateTotalScore();
             const finalScore = Math.round((totalScore / MAX_SCORE) * 100);
             
@@ -441,7 +437,6 @@
         }
 
         // Initialize
-        // Removed explicit event listeners for next/previous buttons
         window.onload = renderQuestion;
     </script>
 </body>
