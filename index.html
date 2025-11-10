@@ -136,6 +136,24 @@
 
         </div>
 
+        <!-- Email Capture Gate (Hidden by Default) -->
+        <div id="email-capture-area" class="hidden text-center p-8 sm:p-12 bg-gray-800 rounded-xl shadow-2xl transition-opacity duration-500 opacity-0">
+            <h2 class="text-3xl font-bold text-white mb-4 gradient-text">
+                Unlock Your Score & Custom Blueprint
+            </h2>
+            <p class="text-lg text-gray-400 mb-8">Enter your work email below to instantly receive your AI GTM Maturity Score and a personalized action plan.</p>
+            
+            <form id="email-form" class="max-w-md mx-auto space-y-4">
+                <input type="email" id="email-input" placeholder="Your work email" required 
+                       class="w-full p-4 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500">
+                <button type="submit" id="unlock-button" class="cta-button w-full px-8 py-3 text-white font-semibold shadow-lg hover:opacity-90 transition duration-300">
+                    See My Score
+                </button>
+            </form>
+            <p id="email-error" class="text-red-400 mt-4 hidden">Please enter a valid work email address.</p>
+        </div>
+
+
         <!-- Results Area (Hidden by Default) -->
         <div id="results-area" class="hidden text-center p-8 sm:p-12 bg-gray-800 rounded-xl shadow-2xl transition-opacity duration-500 opacity-0">
             <h2 class="text-3xl font-bold text-white mb-6">Your AI GTM Maturity Score</h2>
@@ -212,12 +230,31 @@
         const resultsArea = document.getElementById('results-area');
         const questionText = document.getElementById('question-text');
         const answerOptionsDiv = document.getElementById('answer-options');
-        // Removed references to nextButton and previousButton elements
+        
+        // New email capture references
+        const emailCaptureArea = document.getElementById('email-capture-area');
+        const emailForm = document.getElementById('email-form');
+        const emailInput = document.getElementById('email-input');
+        const emailError = document.getElementById('email-error');
 
         const progressBar = document.getElementById('progress-bar');
         const currentQuestionCount = document.getElementById('current-question-count');
         const confettiContainer = document.getElementById('confetti-canvas');
         
+        // --- UTILITY FUNCTIONS ---
+        function isValidEmail(email) {
+            // Basic regex for work/professional email validation (not allowing common personal domains)
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const personalDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com'];
+            
+            if (!re.test(String(email).toLowerCase())) return false;
+
+            const domain = email.substring(email.lastIndexOf('@') + 1).toLowerCase();
+            if (personalDomains.includes(domain)) return false;
+
+            return true;
+        }
+
         // --- CONFETTI FUNCTIONS ---
 
         function createConfetti(x, y, color) {
@@ -282,8 +319,6 @@
             const q = questions[currentQuestionIndex];
             let score;
             
-            // Note: Since Q8 (the only inverted question) was removed, this logic could be simpler, 
-            // but keeping the inverted check here for future flexibility.
             const isGoodAnswer = q.inverted ? !isYes : isYes;
             score = isGoodAnswer ? 10 : 0;
 
@@ -304,7 +339,7 @@
 
         function renderQuestion() {
             if (currentQuestionIndex >= MAX_QUESTIONS) {
-                showResults();
+                showEmailCapture(); // Check the email gate when quiz is done
                 return;
             }
 
@@ -337,10 +372,29 @@
             currentQuestionCount.textContent = currentQuestionIndex + 1;
             const progress = ((currentQuestionIndex + 1) / MAX_QUESTIONS) * 100;
             progressBar.style.width = `${progress}%`;
-            
-            // No need to manage button visibility/state since buttons are removed
         }
         
+        function showEmailCapture() {
+            quizArea.classList.add('hidden');
+            emailCaptureArea.classList.remove('hidden');
+            setTimeout(() => emailCaptureArea.classList.remove('opacity-0'), 10);
+            
+            emailForm.onsubmit = function(e) {
+                e.preventDefault();
+                const email = emailInput.value.trim();
+                
+                if (isValidEmail(email)) {
+                    // In a real app, this is where you'd send the data to your CRM/DB
+                    // console.log("Captured Email:", email); 
+                    emailError.classList.add('hidden');
+                    // Proceed to results
+                    showResults();
+                } else {
+                    emailError.classList.remove('hidden');
+                }
+            };
+        }
+
         // --- CHART RENDERING ---
         
         function renderChart(containerId, title, metricText, score) {
@@ -418,7 +472,7 @@
 
 
         function showResults() {
-            quizArea.classList.add('hidden');
+            emailCaptureArea.classList.add('hidden'); // Hide the capture area
             resultsArea.classList.remove('hidden');
             setTimeout(() => resultsArea.classList.remove('opacity-0'), 10);
 
